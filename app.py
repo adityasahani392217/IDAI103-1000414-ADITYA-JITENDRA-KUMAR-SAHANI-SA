@@ -17,7 +17,7 @@ if "GOOGLE_API_KEY" not in st.secrets:
     st.stop()
 
 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
-model = genai.GenerativeModel("models/gemini-1.5-pro")
+model = genai.GenerativeModel("gemini-3-flash-preview")
 
 # -------------------------------
 # User Input Section
