@@ -11,10 +11,8 @@ import pandas as pd
 import random
 import matplotlib.pyplot as plt
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
-from reportlab.lib.styles import ParagraphStyle
-from reportlab.lib import colors
-from reportlab.lib.units import inch
 from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib.units import inch
 from reportlab.lib.pagesizes import letter
 
 # ==========================================
@@ -39,13 +37,13 @@ def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
 
 # ==========================================
-# SESSION INIT
+# SESSION STATE
 # ==========================================
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
 
 # ==========================================
-# AUTHENTICATION
+# AUTH SYSTEM
 # ==========================================
 def show_auth():
     st.title("🔐 CoachBot AI Authentication")
@@ -53,8 +51,8 @@ def show_auth():
 
     # LOGIN
     with tab1:
-        username = st.text_input("Username", key="login_user")
-        password = st.text_input("Password", type="password", key="login_pass")
+        username = st.text_input("Username")
+        password = st.text_input("Password", type="password")
 
         if st.button("Login"):
             if username in users["users"]:
@@ -69,8 +67,8 @@ def show_auth():
 
     # SIGNUP
     with tab2:
-        new_user = st.text_input("Create Username", key="new_user")
-        new_pass = st.text_input("Create Password", type="password", key="new_pass")
+        new_user = st.text_input("Create Username")
+        new_pass = st.text_input("Create Password", type="password")
 
         if st.button("Create Account"):
             if new_user in users["users"]:
@@ -96,7 +94,7 @@ if not st.session_state.logged_in:
 # GEMINI CONFIG
 # ==========================================
 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
-model = genai.GenerativeModel("gemini-3-flash-preview")
+model = genai.GenerativeModel("models/gemini-1.5-pro")
 
 # ==========================================
 # MAIN APP
@@ -127,12 +125,24 @@ st.header("📝 Athlete Profile")
 
 sport = st.selectbox("Sport", ["Football", "Cricket", "Basketball", "Athletics"])
 position = st.text_input("Position")
-injury = st.text_area("Injury History")
+injury = st.text_area("Injury History", placeholder="None if healthy")
 intensity = st.selectbox("Intensity", ["Low", "Moderate", "High"])
 diet = st.selectbox("Diet", ["Vegetarian", "Non-Vegetarian", "Vegan"])
 goal = st.text_input("Goal")
 
 custom_prompt = st.text_area("✍️ Custom Coaching Request")
+
+# ==========================================
+# RISK LEVEL
+# ==========================================
+risk_level = "Low"
+if injury:
+    if "knee" in injury.lower() or "ankle" in injury.lower():
+        risk_level = "Moderate"
+    if "multiple" in injury.lower():
+        risk_level = "High"
+
+st.info(f"⚠ Injury Risk Level: {risk_level}")
 
 # ==========================================
 # CALORIE ESTIMATE
@@ -142,18 +152,12 @@ calories = calories_map[intensity]
 st.metric("Estimated Calories", f"{calories} kcal")
 
 # ==========================================
-# GENERATE AI SCORE
-# ==========================================
-def generate_ai_score():
-    return random.randint(85, 99)
-
-# ==========================================
 # GENERATE WORKOUT
 # ==========================================
 if st.button("🚀 Generate & Save Plan"):
 
     full_prompt = f"""
-    You are a certified youth coach.
+    You are a certified youth sports coach.
 
     Sport: {sport}
     Position: {position}
@@ -173,14 +177,14 @@ if st.button("🚀 Generate & Save Plan"):
     - Motivation
     """
 
-    with st.spinner("Generating plan..."):
+    try:
         response = model.generate_content(
             full_prompt,
             generation_config=genai.types.GenerationConfig(temperature=0.4)
         )
 
         workout_output = response.text
-        ai_score = generate_ai_score()
+        ai_score = random.randint(85, 99)
 
         st.success("Plan Generated")
         st.markdown(workout_output)
@@ -188,8 +192,13 @@ if st.button("🚀 Generate & Save Plan"):
 
         session_entry = {
             "date": str(datetime.datetime.now()),
-            "ai_score": ai_score,
+            "sport": sport,
+            "position": position,
+            "goal": goal,
+            "custom_prompt": custom_prompt,
+            "risk_level": risk_level,
             "calories": calories,
+            "ai_score": ai_score,
             "workout_output": workout_output
         }
 
@@ -202,35 +211,46 @@ if st.button("🚀 Generate & Save Plan"):
         with open(user_file, "w") as f:
             toml.dump(user_data, f)
 
+        st.success("Session Saved Successfully!")
+
+    except Exception as e:
+        st.error("Gemini API Error")
+        st.write(str(e))
+
 # ==========================================
 # DISPLAY HISTORY
 # ==========================================
 st.header("📜 Session History")
 
+scores = []
+dates = []
+
 if "history" in user_data and user_data["history"]:
-    scores = []
-    dates = []
-
     for key, session in user_data["history"].items():
-        scores.append(session["ai_score"])
-        dates.append(key)
 
-        with st.expander(f"{key}"):
-            st.write("Calories:", session["calories"])
-            st.write("AI Score:", session["ai_score"])
-            st.markdown(session["workout_output"])
+        with st.expander(f"{key} | {session.get('date','')}"):
 
-            # PDF Export
+            st.write("Sport:", session.get("sport", "N/A"))
+            st.write("Calories:", session.get("calories", "N/A"))
+            st.write("AI Score:", session.get("ai_score", "N/A"))
+            st.markdown(session.get("workout_output", ""))
+
+            # Collect for graph safely
+            if "ai_score" in session:
+                scores.append(session["ai_score"])
+                dates.append(key)
+
+            # PDF EXPORT
             if st.button(f"Download PDF - {key}"):
 
                 pdf_file = f"{key}.pdf"
                 doc = SimpleDocTemplate(pdf_file, pagesize=letter)
                 elements = []
-
                 styles = getSampleStyleSheet()
+
                 elements.append(Paragraph("CoachBot AI Workout Plan", styles["Heading1"]))
                 elements.append(Spacer(1, 0.3 * inch))
-                elements.append(Paragraph(session["workout_output"], styles["Normal"]))
+                elements.append(Paragraph(session.get("workout_output", ""), styles["Normal"]))
 
                 doc.build(elements)
 
@@ -242,9 +262,10 @@ if "history" in user_data and user_data["history"]:
                         mime="application/pdf"
                     )
 
-    # ==========================================
-    # PROGRESS GRAPH
-    # ==========================================
+# ==========================================
+# PROGRESS GRAPH
+# ==========================================
+if scores:
     st.subheader("📈 AI Score Progress")
 
     fig, ax = plt.subplots()
@@ -253,6 +274,3 @@ if "history" in user_data and user_data["history"]:
     ax.set_xlabel("Session")
     ax.set_title("Progress Over Time")
     st.pyplot(fig)
-
-else:
-    st.info("No sessions saved yet.")
