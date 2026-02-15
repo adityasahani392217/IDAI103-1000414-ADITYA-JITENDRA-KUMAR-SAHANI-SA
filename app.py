@@ -1,3 +1,12 @@
+import streamlit as st
+import google.generativeai as genai
+import toml
+import os
+import hashlib
+import datetime
+import pandas as pd
+import random
+
 # -------------------------------
 # MAIN APP (After Login)
 # -------------------------------
