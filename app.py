@@ -94,7 +94,7 @@ if not st.session_state.logged_in:
 # GEMINI CONFIG
 # ==========================================
 genai.configure(api_key=st.secrets["GOOGLE_API_KEY"])
-model = genai.GenerativeModel("models/gemini-1.5-pro")
+model = genai.GenerativeModel("gemini-3-flash-preview")
 
 # ==========================================
 # MAIN APP
