@@ -1,1 +1,10 @@
-[users]
+[history.session_1]
+date = "2025-02-01 10:22"
+sport = "Cricket"
+position = "Fast Bowler"
+goal = "Build stamina"
+custom_prompt = "4-week low impact knee rehab plan"
+risk_level = "Moderate"
+calories = 2500
+ai_score = 94
+workout_output = "Warm-up: ..."
