@@ -1,4 +1,4 @@
-# 🏋️ Next Gen Sports Lab — Smart Fitness Coaching Assistant
+# 🏋️ CoachBot — Smart Fitness Coaching Assistant
 
 **Student Name:** Aditya Jitendra Kumar Sahani  
 **Registration No:** 1000414  
@@ -233,8 +233,8 @@ Prompts were iteratively refined after testing.
 
 1. Clone your repository
    ```bash
-   git clone <your-repository-link>
-   cd Next-Gen-Sports-Lab
+   git clone (https://github.com/adityasahani392217/IDAI103-1000414-ADITYA-JITENDRA-KUMAR-SAHANI-SA)
+   cd IDAI103-1000414-ADITYA-JITENDRA-KUMAR-SAHANI-SA
    ```
 
 2. Install dependencies
@@ -279,7 +279,7 @@ Prompts were iteratively refined after testing.
 ## 📁 Project Structure
 
 ```text
-CoachBot-AI/
+IDAI103-1000414-ADITYA-JITENDRA-KUMAR-SAHANI-SA
 │
 ├── app.py
 ├── requirements.txt
@@ -312,3 +312,4 @@ CoachBot-AI/
 CoachBot AI demonstrates how Generative AI can deliver practical, safe, and accessible sports coaching support. It combines prompt engineering, authentication, analytics, PDF reporting, and cloud deployment into a complete real-world educational project.
 
 **⭐ AI Coaching for Everyone — Train Smart, Stay Safe.**
+
