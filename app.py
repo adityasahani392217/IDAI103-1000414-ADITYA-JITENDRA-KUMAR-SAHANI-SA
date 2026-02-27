@@ -200,7 +200,7 @@ def verify_password(stored,plain):
 # ═══════════════════════════════════════════════════════════
 #  PAGE CONFIG
 # ═══════════════════════════════════════════════════════════
-st.set_page_config(page_title="Next Gen Sports Lab",page_icon="⚡",layout="wide",initial_sidebar_state="expanded")
+st.set_page_config(page_title="CoachBot",page_icon="⚡",layout="wide",initial_sidebar_state="expanded")
 
 st.markdown("""
 <style>
@@ -489,7 +489,7 @@ def sidebar(active):
         # Brand
         st.markdown(f"""<div style="display:flex;align-items:center;gap:8px;margin-bottom:12px;
             padding-bottom:11px;border-bottom:1px solid #e2e8f0;">
-          {LOGO.format(s=22)}<span style="font-size:.95rem;font-weight:800;color:#0f172a;">Next Gen Sports Lab</span>
+          {LOGO.format(s=22)}<span style="font-size:.95rem;font-weight:800;color:#0f172a;">CoachBot</span>
           <span style="font-size:.55rem;color:#0d9488;font-weight:700;background:#e0fffe;padding:1px 6px;border-radius:10px;border:1px solid #13ecec;margin-left:auto;">Gemini</span>
         </div>""",unsafe_allow_html=True)
 
@@ -672,7 +672,7 @@ def login_screen():
             display:flex;align-items:center;justify-content:center;z-index:9999;">
           <div style="text-align:center;">
             <div style="margin-bottom:1rem;">{LOGO.format(s=72)}</div>
-            <h1 style="font-size:2rem;font-weight:900;color:#fff;">Next Gen Sports Lab</h1>
+            <h1 style="font-size:2rem;font-weight:900;color:#fff;">CoachBot</h1>
             <p style="color:#13ecec;font-size:.88rem;margin:.6rem 0 1.8rem;">Setting up your dashboard...</p>
             <div style="width:240px;height:4px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;margin:0 auto;">
               <div style="height:100%;background:#13ecec;animation:lb 2.5s ease forwards;"></div></div>
@@ -1352,4 +1352,5 @@ if __name__=="__main__":
     elif pg=='dashboard':  dashboard_screen()
     elif pg=='tracker':    tracker_screen()
     elif pg=='feedback':   feedback_screen()
+
     elif pg=='settings':   settings_screen()
